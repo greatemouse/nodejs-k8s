@@ -129,3 +129,19 @@ and should include some of the following:
 * For simplicity, the service logs all the requests to the console.
 
 **GOOD LUCK!**
+
+****NOTES****
+$postParams = @{username='user01'}
+Invoke-WebRequest -Uri http://40.122.205.190:3000/users -Method POST -Body $postParams
+
+curl -i -X POST -H 'Content-Type: application/json' -d '{"username":"user02"}' http://40.122.205.190:3000/users
+curl -i -X POST -H 'Content-Type: application/json' -d {"_id":"5f251ec2c078ed774f1f650c","name":"user01","date":1596268226276} http://40.122.205.190:3000/users
+
+docker build -t exampleacr01/devops-exercise-image .
+docker tag exampleacr01/devops-exercise-image exampleacr01.azurecr.io/samples/nodejs
+docker push exampleacr01.azurecr.io/samples/nodejs
+docker pull exampleacr01.azurecr.io/samples/nodejs
+docker run --name devops-exercise -p 3000:3000 -d exampleacr01.azurecr.io/samples/nodejs
+
+kubectl apply -f ./devops-exercise.yaml
+kubectl expose deployment devops-exercise --type=LoadBalancer --port=3000
