@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: devops-exercise
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: devops-exercise
+  template:
+    metadata:
+      labels:
+        app: devops-exercise
+    spec:
+      containers:
+        - name: devops-exercise
+          image: exampleacr01.azurecr.io/samples/nodejs:latest
+          ports:
+            - containerPort: 3000
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: devops-exercise-svc
+spec:
+  selector:
+    app: devops-exercise
+  ports:
+    - port: 3000
+      targetPort: 3000
+  type: LoadBalancer
