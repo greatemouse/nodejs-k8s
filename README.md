@@ -1,14 +1,12 @@
 # DevOps Exercise
-Welcome!
-We are excited to move forward and give you the homework assignment.
-The purpose of this assignment is twofold: not only will it help us assess your skill-set, but it will also help you understand the type of challenges we currently work on and ask yourself if these challenges are of the kind you would be interested in.
 
 ## The Users Service
 
-This github repository is a `node.js` demo app of a very small "users" service.
+This github repository is a `node.js` app of a very small "users" service.
 Below are the instructions of how to build, run and use this service.
 
 ### Prerequisites
+nodejs 8, 10, 12
 
 #### Mongo DB
 The users service works with a mongo DB to store it's users.<BR>
@@ -85,7 +83,7 @@ We can look at the pipline as consisting of three stages:
 
 * Continuous Integration
 * Continuous Deployment
-* Continuous Monitoring
+* Continuous Monitoring(optional)
 
 ### CI
 
@@ -135,7 +133,6 @@ $postParams = @{username='user01'}
 Invoke-WebRequest -Uri http://40.122.205.190:3000/users -Method POST -Body $postParams
 
 curl -i -X POST -H 'Content-Type: application/json' -d '{"username":"user02"}' http://40.122.205.190:3000/users
-curl -i -X POST -H 'Content-Type: application/json' -d {"_id":"5f251ec2c078ed774f1f650c","name":"user01","date":1596268226276} http://40.122.205.190:3000/users
 
 docker build -t exampleacr01/devops-exercise-image .
 docker tag exampleacr01/devops-exercise-image exampleacr01.azurecr.io/samples/nodejs
@@ -145,3 +142,17 @@ docker run --name devops-exercise -p 3000:3000 -d exampleacr01.azurecr.io/sample
 
 kubectl apply -f ./devops-exercise.yaml
 kubectl expose deployment devops-exercise --type=LoadBalancer --port=3000
+____________________________________________
+#!/bin/bash
+
+echo "------> Create Docker Image <------"
+docker build -t exampleacr01/devops-exercise-image . \ 
+
+echo "------> Tag and Push image to GCR <------" \ 
+&& docker tag exampleacr01/devops-exercise-image gcr.io/stastest/devops-exercise-image:tag01 \ 
+&& docker push gcr.io/stastest/devops-exercise-image:tag01 \ 
+
+echo "------> Deploy image to GKE <------" \ 
+&& kubectl delete deployment devops-exercise-gke && kubectl delete svc devops-exercise-svc \ 
+&& kubectl apply -f ./devops-exercise.yaml
+_____________________________________________
